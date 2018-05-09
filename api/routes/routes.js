@@ -25,6 +25,7 @@ module.exports = function(app) {
 	app.route('/sendRequestToDriver').post(requestController.sendRequestToDriver);
 	app.route('/acceptRequest').post(requestController.acceptRequest);
 	app.route('/rejectRequest').post(requestController.rejectRequest);
+	app.route('/getRoute').post(requestController.getRoute);
 
 	// Passenger Trips Routes
 	app.route('/savePassengerTrip').post(passengerTripController.savePassengerTrip);

@@ -55,6 +55,8 @@ exports.sendRequestToDriver = function (req, res) {
 	var tripDate = req.body.tripDate;
 	var driverId = req.body.driverId;
 	var passengerId = req.body.passengerId;
+	var currentLocationLatitude = req.body.currentLocationLatitude;
+	var currentLocationLongitude = req.body.currentLocationLongitude;
 
 	var driverFirebaseToken = ""
 
@@ -68,8 +70,10 @@ exports.sendRequestToDriver = function (req, res) {
 			isAccepted: 0
 		};
 
+		console.log(values)
 		connection.query('INSERT INTO route_requests SET ?', values, function (error, requestResults, fields) {
 			if (error) {
+				console.log(error)
 				res.status(400).send({
 					status: false,
 					result: error
@@ -82,6 +86,7 @@ exports.sendRequestToDriver = function (req, res) {
 			connection.query(sql, function (error, results, fields) {
 				connection.release();
 				if (error) {
+					console.log(error)
 					res.status(200).send(error);
 				}
 	
@@ -98,7 +103,9 @@ exports.sendRequestToDriver = function (req, res) {
 						passengerTo: passengerTo,
 						time: time,
 						tripDate: tripDate,
-						requestId: String(requestResults.insertId)
+						requestId: String(requestResults.insertId),
+						currentLocationLatitude: currentLocationLatitude,
+						currentLocationLongitude: currentLocationLongitude
 					}
 				};
 	
@@ -107,6 +114,10 @@ exports.sendRequestToDriver = function (req, res) {
 					timeToLive: 60 * 60 * 24
 				};
 	
+				console.log("---------")
+				console.log(driverFirebaseToken)
+				console.log("---------")
+
 				admin.messaging().sendToDevice(driverFirebaseToken, payload, options).then(function (response) {
 					console.log("Successfully sent push notification");
 	
@@ -149,6 +160,8 @@ exports.acceptRequest = function (req, res) {
 				// Update Requests table
 				var sqlQuery3 = mysql.format("update route_requests SET isAccepted = ? where requestId=?", ["1", req.body.requestId]);
 				connection.query(sqlQuery3, function (error, result3, fields3) {
+					connection.release();
+
 					if (error) {
 						res.status(200).send(error);
 					}
@@ -213,6 +226,8 @@ exports.rejectRequest = function (req, res) {
 				// Update Requests table
 				var sqlQuery3 = mysql.format("update route_requests SET isAccepted = ? where requestId=?", ["2", req.body.requestId]);
 				connection.query(sqlQuery3, function (error, result3, fields3) {
+					connection.release();
+
 					if (error) {
 						res.status(200).send(error);
 					}
@@ -249,6 +264,36 @@ exports.rejectRequest = function (req, res) {
 							response: error
 						});
 					});
+				});
+			});
+		});
+	})
+}
+
+exports.getRoute = function (req, res) {
+	console.log("New Request -> Get Route")
+
+	pool.getConnection(function (err, connection) {
+
+		// Get route Id
+		var sqlQuery = mysql.format("select * from route_requests where requestId=?", [req.body.requestId]);
+		connection.query(sqlQuery, function (error, results, fields) {
+			if (error) {
+				res.status(200).send(error);
+			}
+
+			// Get Route from driver_routes
+			var sqlQuery2 = mysql.format("select * from driver_routes where routeId=?", [results[0]["routeId"]]);
+			connection.query(sqlQuery2, function (error, result, fields) {
+				connection.release();
+				
+				if (error) {
+					res.status(200).send(error);
+				}
+
+				res.status(200).send({
+					status: true,
+					response: result
 				});
 			});
 		});
