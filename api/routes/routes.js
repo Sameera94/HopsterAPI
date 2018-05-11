@@ -30,4 +30,5 @@ module.exports = function(app) {
 	// Passenger Trips Routes
 	app.route('/savePassengerTrip').post(passengerTripController.savePassengerTrip);
 	app.route('/getAllPassengerTrips').post(passengerTripController.getAllPassengerTrips);
+	app.route('/deletePassengerTrip').post(passengerTripController.deletePassengerTrip);
 };

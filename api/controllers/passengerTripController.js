@@ -61,3 +61,24 @@ exports.getAllPassengerTrips = function (req, res) {
 		});
 	});
 }
+
+exports.deletePassengerTrip = function (req, res) {
+	console.log("New Request -> Delete PassengerTrip")
+	
+	pool.getConnection(function (err, connection) {
+		var sql = mysql.format("DELETE FROM passenger_trips where id=?", [req.body.passengerTripsId]);
+
+		connection.query(sql, function (error, results, fields) {
+			connection.release();
+			if (error) {
+				console.log(error)
+				res.status(200).send(error);
+			}
+
+			res.status(200).send({
+				status: true,
+				user: results
+			});
+		});
+	});
+}
