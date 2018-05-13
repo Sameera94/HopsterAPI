@@ -8,8 +8,10 @@ module.exports = function(app) {
 	var requestController = require('../controllers/requestController');
 	var passengerTripController = require('../controllers/passengerTripController');
 
+	app.route('/health').get(userController.health)
+
 	// User routes
-    app.route('/login').post(userController.validateUserLogin);        
+   app.route('/login').post(userController.validateUserLogin);        
 	app.route('/createNewUser').post(userController.createNewUser);
 	app.route('/isEmailExist').post(userController.isEmailExist);
 	app.route('/resetPassword').post(userController.resetPassword);
@@ -31,4 +33,6 @@ module.exports = function(app) {
 	app.route('/savePassengerTrip').post(passengerTripController.savePassengerTrip);
 	app.route('/getAllPassengerTrips').post(passengerTripController.getAllPassengerTrips);
 	app.route('/deletePassengerTrip').post(passengerTripController.deletePassengerTrip);
+
+	app.route('/insertFirebase').post(requestController.insertFirebase);
 };

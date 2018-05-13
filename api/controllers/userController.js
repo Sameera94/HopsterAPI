@@ -8,8 +8,16 @@ var pool = mysql.createPool({
 	database: 'spds_db'
 });
 
+exports.health = function (req, res) {
+	console.log(new Date(Date.now()).toLocaleString() + " - New Request -> Check Health")
+
+	res.status(200).send({
+		status: true
+	});
+}
+
 exports.validateUserLogin = function (req, res) {
-	console.log("New Request -> User login\n")
+	console.log(new Date(Date.now()).toLocaleString() + " - New Request -> User login")
 	pool.getConnection(function (err, connection) {
 
 		var sql = mysql.format("select * from users where email=? && password=?", [req.body.email, req.body.password]);
@@ -35,7 +43,7 @@ exports.validateUserLogin = function (req, res) {
 }
 
 exports.createNewUser = function (req, res) {
-	console.log("New Request -> Create User\n")
+	console.log(new Date(Date.now()).toLocaleString() + " - New Request -> Create User")
 
 	pool.getConnection(function (err, connection) {
 
@@ -67,7 +75,7 @@ exports.createNewUser = function (req, res) {
 }
 
 exports.isEmailExist = function (req, res) {
-	console.log("New Request -> Email validation\n")
+	console.log(new Date(Date.now()).toLocaleString() + " - New Request -> Email validation")
 
 	pool.getConnection(function (err, connection) {
 
@@ -94,7 +102,7 @@ exports.isEmailExist = function (req, res) {
 }
 
 exports.resetPassword = function (req, res) {
-	console.log("New Request -> Reset Password\n")
+	console.log(new Date(Date.now()).toLocaleString() + " - New Request -> Reset Password")
 
 	pool.getConnection(function (err, connection) {
 		var sql = mysql.format("update users SET password = ? where email=?", [req.body.password, req.body.email]);
@@ -117,7 +125,7 @@ exports.resetPassword = function (req, res) {
 					status: true,
 					user: results
 				});
-			}			
+			}
 		});
 	});
 }

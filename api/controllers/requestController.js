@@ -17,7 +17,7 @@ var pool = mysql.createPool({
 });
 
 exports.updateFirebaseTocken = function (req, res) {
-	console.log("New Request -> Save device tocken")
+	console.log(new Date(Date.now()).toLocaleString() + " - New Request -> Save device tocken")
 
 	pool.getConnection(function (err, connection) {
 		var sql = mysql.format("update users SET firebaseToken = ? where userId=?", [req.body.firebaseToken, req.body.userId]);
@@ -46,7 +46,7 @@ exports.updateFirebaseTocken = function (req, res) {
 }
 
 exports.sendRequestToDriver = function (req, res) {
-	console.log("New Request -> Send Request to driver")
+	console.log(new Date(Date.now()).toLocaleString() + " - New Request -> Send Request to driver")
 
 	var driverRouteId = req.body.driverRouteId;
 	var passengerFrom = req.body.passengerFrom;
@@ -55,8 +55,6 @@ exports.sendRequestToDriver = function (req, res) {
 	var tripDate = req.body.tripDate;
 	var driverId = req.body.driverId;
 	var passengerId = req.body.passengerId;
-	var currentLocationLatitude = req.body.currentLocationLatitude;
-	var currentLocationLongitude = req.body.currentLocationLongitude;
 
 	var driverFirebaseToken = ""
 
@@ -70,7 +68,6 @@ exports.sendRequestToDriver = function (req, res) {
 			isAccepted: 0
 		};
 
-		console.log(values)
 		connection.query('INSERT INTO route_requests SET ?', values, function (error, requestResults, fields) {
 			if (error) {
 				console.log(error)
@@ -80,18 +77,32 @@ exports.sendRequestToDriver = function (req, res) {
 				});
 			}
 
+			// Insert into Firebase realtime database
+			var db = admin.database();
+			var requestId = String(requestResults.insertId)
+			var ref = db.ref("route-requests/"+requestId);
+			
+			ref.set({
+				"data": {
+					requestId: requestId,
+					routeId: req.body.driverRouteId,
+					driverId: req.body.driverId,
+					passengerId: req.body.passengerId
+				}	
+			});
+
 			// Send push notification to driver
 			var sql = mysql.format("select * from users where userId=?", [driverId]);
-			
+
 			connection.query(sql, function (error, results, fields) {
 				connection.release();
 				if (error) {
 					console.log(error)
 					res.status(200).send(error);
 				}
-	
+
 				driverFirebaseToken = results[0]["firebaseToken"];
-	
+
 				var payload = {
 					notification: {
 						title: "New Request",
@@ -103,43 +114,41 @@ exports.sendRequestToDriver = function (req, res) {
 						passengerTo: passengerTo,
 						time: time,
 						tripDate: tripDate,
-						requestId: String(requestResults.insertId),
-						currentLocationLatitude: currentLocationLatitude,
-						currentLocationLongitude: currentLocationLongitude
+						requestId: String(requestResults.insertId)
 					}
 				};
-	
+
 				var options = {
 					priority: "high",
 					timeToLive: 60 * 60 * 24
 				};
-	
+
 				console.log("---------")
 				console.log(driverFirebaseToken)
 				console.log("---------")
 
 				admin.messaging().sendToDevice(driverFirebaseToken, payload, options).then(function (response) {
 					console.log("Successfully sent push notification");
-	
+
 					res.status(200).send({
 						status: true,
 						response: response
 					});
 				}).catch(function (error) {
 					console.log("Error sending message:", error);
-	
+
 					res.status(400).send({
 						status: false,
 						response: error
 					});
 				});
 			});
-		});		
+		});
 	});
 }
 
 exports.acceptRequest = function (req, res) {
-	console.log("New Request -> Accept repquest by driver")
+	console.log(new Date(Date.now()).toLocaleString() + " - New Request -> Accept repquest by driver")
 
 	pool.getConnection(function (err, connection) {
 
@@ -177,22 +186,22 @@ exports.acceptRequest = function (req, res) {
 							requestId: req.body.requestId
 						}
 					};
-		
+
 					var options = {
 						priority: "high",
 						timeToLive: 60 * 60 * 24
 					};
-		
+
 					admin.messaging().sendToDevice(result[0]["firebaseToken"], payload, options).then(function (response) {
 						console.log("Successfully sent push notification");
-		
+
 						res.status(200).send({
 							status: true,
 							response: response
 						});
 					}).catch(function (error) {
 						console.log("Error sending message:", error);
-		
+
 						res.status(400).send({
 							status: false,
 							response: error
@@ -205,7 +214,7 @@ exports.acceptRequest = function (req, res) {
 }
 
 exports.rejectRequest = function (req, res) {
-	console.log("New Request -> Reject repquest by driver")
+	console.log(new Date(Date.now()).toLocaleString() + " - New Request -> Reject repquest by driver")
 
 	pool.getConnection(function (err, connection) {
 
@@ -243,22 +252,22 @@ exports.rejectRequest = function (req, res) {
 							requestId: req.body.requestId
 						}
 					};
-		
+
 					var options = {
 						priority: "high",
 						timeToLive: 60 * 60 * 24
 					};
-		
+
 					admin.messaging().sendToDevice(result[0]["firebaseToken"], payload, options).then(function (response) {
 						console.log("Successfully sent push notification");
-		
+
 						res.status(200).send({
 							status: true,
 							response: response
 						});
 					}).catch(function (error) {
 						console.log("Error sending message:", error);
-		
+
 						res.status(400).send({
 							status: false,
 							response: error
@@ -271,7 +280,7 @@ exports.rejectRequest = function (req, res) {
 }
 
 exports.getRoute = function (req, res) {
-	console.log("New Request -> Get Route")
+	console.log(new Date(Date.now()).toLocaleString() + " - New Request -> Get Route")
 
 	pool.getConnection(function (err, connection) {
 
@@ -286,7 +295,7 @@ exports.getRoute = function (req, res) {
 			var sqlQuery2 = mysql.format("select * from driver_routes where routeId=?", [results[0]["routeId"]]);
 			connection.query(sqlQuery2, function (error, result, fields) {
 				connection.release();
-				
+
 				if (error) {
 					res.status(200).send(error);
 				}
@@ -298,4 +307,19 @@ exports.getRoute = function (req, res) {
 			});
 		});
 	})
+}
+
+exports.insertFirebase = function (req, res) {
+	var db = admin.database();
+	var ref = db.ref("route-requests/"+"350");
+	ref.set({
+		"data": {
+			requestId: "1",
+			routeId: "1",
+			driverId: "1",
+			passengerId: "1",
+			driverLocation: "213123|31213",
+			passengerLocation: "213123|213123"
+		}	
+	});
 }

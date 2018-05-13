@@ -9,7 +9,7 @@ var pool = mysql.createPool({
 });
 
 exports.insertNewDriverRoute = function (req, res) {
-	console.log("New Request -> Insert new driver route")
+	console.log(new Date(Date.now()).toLocaleString() + " - New Request -> Insert new driver route")
 
 	pool.getConnection(function (err, connection) {
 
@@ -79,7 +79,7 @@ exports.insertNewDriverRoute = function (req, res) {
 }
 
 exports.getAllRoutes = function (req, res) {
-	console.log("New Request -> Get All driver routes")
+	console.log(new Date(Date.now()).toLocaleString() + " - New Request -> Get All driver routes")
 
 	pool.getConnection(function (err, connection) {
 
@@ -97,7 +97,7 @@ exports.getAllRoutes = function (req, res) {
 }
 
 exports.deleteRoute = function (req, res) {
-	console.log("New Request -> Delete route")
+	console.log(new Date(Date.now()).toLocaleString() + " - New Request -> Delete route")
 	console.log(req.body.tripId)
 
 	pool.getConnection(function (err, connection) {
@@ -121,7 +121,7 @@ exports.deleteRoute = function (req, res) {
 
 // Search Results
 exports.getAllEnabledDriverRoutes = function (req, res) {
-	console.log("New Request -> Get all enabled driver routes")
+	console.log(new Date(Date.now()).toLocaleString() + " - New Request -> Get all enabled driver routes")
 
 	pool.getConnection(function (err, connection) {
 

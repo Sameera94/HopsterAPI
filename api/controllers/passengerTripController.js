@@ -9,7 +9,7 @@ var pool = mysql.createPool({
 });
 
 exports.savePassengerTrip = function (req, res) {
-	console.log("New Request -> Save PassengerTrip")
+	console.log(new Date(Date.now()).toLocaleString() + " - New Request -> Save PassengerTrip")
 
 	pool.getConnection(function (err, connection) {
 
@@ -45,7 +45,7 @@ exports.savePassengerTrip = function (req, res) {
 }
 
 exports.getAllPassengerTrips = function (req, res) {
-	console.log("New Request -> Get All Passenger Trips")
+	console.log(new Date(Date.now()).toLocaleString() + " - New Request -> Get All Passenger Trips")
 
 	pool.getConnection(function (err, connection) {
 
@@ -63,7 +63,7 @@ exports.getAllPassengerTrips = function (req, res) {
 }
 
 exports.deletePassengerTrip = function (req, res) {
-	console.log("New Request -> Delete PassengerTrip")
+	console.log(new Date(Date.now()).toLocaleString() + " - çcçNew Request -> Delete PassengerTrip")
 	
 	pool.getConnection(function (err, connection) {
 		var sql = mysql.format("DELETE FROM passenger_trips where id=?", [req.body.passengerTripsId]);
