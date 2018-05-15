@@ -29,6 +29,7 @@ module.exports = function(app) {
 	app.route('/rejectRequest').post(requestController.rejectRequest);
 	app.route('/getRoute').post(requestController.getRoute);
 	app.route('/getPassengersOfRoute').post(requestController.getPassengersOfRoute)
+	app.route('/setPickStatus').post(requestController.setPickStatus)
 
 	// Passenger Trips Routes
 	app.route('/savePassengerTrip').post(passengerTripController.savePassengerTrip);
