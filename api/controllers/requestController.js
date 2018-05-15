@@ -309,6 +309,28 @@ exports.getRoute = function (req, res) {
 	})
 }
 
+exports.getPassengersOfRoute = function (req, res) {
+	console.log(new Date(Date.now()).toLocaleString() + " - New Request -> Get Passengers Of Request")
+	
+	pool.getConnection(function (err, connection) {
+		var sqlQuery2 = mysql.format("select * from route_requests r, users u where r.passengerId = u.userId AND r.isAccepted = ? AND r.routeId = ?", ['1', req.body.routeId]);
+		connection.query(sqlQuery2, function (error, result, fields) {
+			connection.release();
+
+			if (error) {
+				res.status(200).send(error);
+			}
+
+			res.status(200).send({
+				status: true,
+				response: result
+			});
+		});
+	});
+}
+
+
+
 exports.insertFirebase = function (req, res) {
 	var db = admin.database();
 	var ref = db.ref("route-requests/"+"350");
