@@ -330,6 +330,33 @@ exports.getPassengersOfRoute = function (req, res) {
 }
 
 
+exports.setPickStatus = function (req, res) {
+	console.log(new Date(Date.now()).toLocaleString() + " - New Request -> Set pessengger pick status")
+	
+	pool.getConnection(function (err, connection) {
+		var sql = mysql.format("update route_requests SET pickStatus = ? where requestId=?", [req.body.pickStatus, req.body.requestId]);
+		connection.query(sql, function (error, result, fields) {
+			connection.release();
+
+			if (error) {
+				res.status(200).send(error);
+			}
+			else if (result.affectedRows == 0) {
+				res.status(200).send({
+					status: false,
+					result: result
+				});
+			} 
+			else {
+				res.status(200).send({
+					status: true,
+					result: result
+				});
+			}
+		});
+	});
+}
+
 
 exports.insertFirebase = function (req, res) {
 	var db = admin.database();
