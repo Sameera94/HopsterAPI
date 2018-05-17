@@ -123,12 +123,12 @@ exports.sendRequestToDriver = function (req, res) {
 					timeToLive: 60 * 60 * 24
 				};
 
-				console.log("---------")
-				console.log(driverFirebaseToken)
-				console.log("---------")
+				// console.log("---------")
+				// console.log(driverFirebaseToken)
+				// console.log("---------")
 
 				admin.messaging().sendToDevice(driverFirebaseToken, payload, options).then(function (response) {
-					console.log("Successfully sent push notification");
+					console.log(new Date(Date.now()).toLocaleString() + " - Successfully sent push notification");
 
 					res.status(200).send({
 						status: true,

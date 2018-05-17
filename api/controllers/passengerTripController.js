@@ -63,7 +63,7 @@ exports.getAllPassengerTrips = function (req, res) {
 }
 
 exports.deletePassengerTrip = function (req, res) {
-	console.log(new Date(Date.now()).toLocaleString() + " - çcçNew Request -> Delete PassengerTrip")
+	console.log(new Date(Date.now()).toLocaleString() + " - New Request -> Delete PassengerTrip")
 	
 	pool.getConnection(function (err, connection) {
 		var sql = mysql.format("DELETE FROM passenger_trips where id=?", [req.body.passengerTripsId]);
