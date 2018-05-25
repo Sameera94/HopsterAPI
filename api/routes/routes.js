@@ -7,6 +7,7 @@ module.exports = function(app) {
 	var driverController = require('../controllers/routeController');
 	var requestController = require('../controllers/requestController');
 	var passengerTripController = require('../controllers/passengerTripController');
+	var paymentController = require('../controllers/paymentController')
 
 	app.route('/health').get(userController.health)
 
@@ -35,6 +36,8 @@ module.exports = function(app) {
 	app.route('/savePassengerTrip').post(passengerTripController.savePassengerTrip);
 	app.route('/getAllPassengerTrips').post(passengerTripController.getAllPassengerTrips);
 	app.route('/deletePassengerTrip').post(passengerTripController.deletePassengerTrip);
+
+	app.route('/getPaymentValues').post(paymentController.getPaymentValues);
 
 	app.route('/insertFirebase').post(requestController.insertFirebase);
 };

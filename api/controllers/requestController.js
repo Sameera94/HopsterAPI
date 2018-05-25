@@ -65,7 +65,12 @@ exports.sendRequestToDriver = function (req, res) {
 			routeId: req.body.driverRouteId,
 			passengerId: req.body.passengerId,
 			driverId: req.body.driverId,
-			isAccepted: 0
+			isAccepted: 0,
+			fromLatitude: req.body.fromLatitude,
+			fromLongitude: req.body.fromLongitude,
+			toLatitude: req.body.toLatitude,
+			toLongitude: req.body.toLongitude,
+			distance: req.body.distance
 		};
 
 		connection.query('INSERT INTO route_requests SET ?', values, function (error, requestResults, fields) {
