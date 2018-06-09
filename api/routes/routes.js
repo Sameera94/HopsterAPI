@@ -29,6 +29,7 @@ module.exports = function(app) {
 	app.route('/acceptRequest').post(requestController.acceptRequest);
 	app.route('/rejectRequest').post(requestController.rejectRequest);
 	app.route('/getRoute').post(requestController.getRoute);
+	app.route('/getRouteFromRouteId').post(requestController.getRouteFromRouteId)
 	app.route('/getPassengersOfRoute').post(requestController.getPassengersOfRoute)
 	app.route('/setPickStatus').post(requestController.setPickStatus)
 

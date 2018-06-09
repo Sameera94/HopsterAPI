@@ -39,41 +39,46 @@ exports.insertNewDriverRoute = function (req, res) {
 				});
 			}
 
-			try {
-				var waypoints = JSON.parse(req.body.waypoints)
-				if (waypoints.length > 0) {
+			res.status(200).send({
+				status: true,
+				insertId: results.insertId
+			});
 
-					for (let waypoint of waypoints) {
+			// try {
+			// 	var waypoints = JSON.parse(req.body.waypoints)
+			// 	if (waypoints.length > 0) {
 
-						pool.getConnection(function (err, connection) {
-							var values = {
-								routeId: results.insertId,
-								location: waypoint.location,
-								latitude: waypoint.latitude,
-								longitude: waypoint.longitude,
-								waypointPosition: waypoint.waypointPosition
-							};
+			// 		for (let waypoint of waypoints) {
 
-							connection.query('INSERT INTO driver_waypoints SET ?', values, function (error, result, fields) {
-								connection.release();
-							});
-						})
-					}
+			// 			pool.getConnection(function (err, connection) {
+			// 				var values = {
+			// 					routeId: results.insertId,
+			// 					location: waypoint.location,
+			// 					latitude: waypoint.latitude,
+			// 					longitude: waypoint.longitude,
+			// 					waypointPosition: waypoint.waypointPosition
+			// 				};
 
-					res.status(200).send({
-						status: true,
-						result: results
-					});
+			// 				connection.query('INSERT INTO driver_waypoints SET ?', values, function (error, result, fields) {
+			// 					connection.release();
+			// 				});
+			// 			})
+			// 		}
 
-				} else {
-					res.status(200).send({
-						status: true,
-						result: results
-					});
-				}
-			} catch (error) {
-				console.log("error")
-			}
+			// 		res.status(200).send({
+			// 			status: true,
+			// 			result: results
+			// 		});
+
+			// 	} else {
+			// 		res.status(200).send({
+			// 			status: true,
+			// 			result: results
+			// 		});
+			// 	}
+			// } catch (error) {
+			// 	console.log("error")
+			// }
 		});
 	});
 }

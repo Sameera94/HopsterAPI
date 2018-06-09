@@ -314,6 +314,28 @@ exports.getRoute = function (req, res) {
 	})
 }
 
+exports.getRouteFromRouteId = function(req, res) {
+	console.log(new Date(Date.now()).toLocaleString() + " - New Request -> Get Route from RouteId")
+
+	pool.getConnection(function (err, connection) {
+
+		// Get Route from driver_routes
+		var sqlQuery2 = mysql.format("select * from driver_routes where routeId=?", [req.body.routeId]);
+		connection.query(sqlQuery2, function (error, result, fields) {
+			connection.release();
+
+			if (error) {
+				res.status(200).send(error);
+			}
+
+			res.status(200).send({
+				status: true,
+				response: result
+			});
+		});
+	})
+}
+
 exports.getPassengersOfRoute = function (req, res) {
 	console.log(new Date(Date.now()).toLocaleString() + " - New Request -> Get Passengers Of Request")
 	
