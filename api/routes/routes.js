@@ -32,13 +32,18 @@ module.exports = function(app) {
 	app.route('/getRouteFromRouteId').post(requestController.getRouteFromRouteId)
 	app.route('/getPassengersOfRoute').post(requestController.getPassengersOfRoute)
 	app.route('/setPickStatus').post(requestController.setPickStatus)
+	app.route('/updateTotalAmount').post(requestController.updateTotalAmount)
+	app.route('/getDriverHistory').post(requestController.getDriverHistory)
 
 	// Passenger Trips Routes
 	app.route('/savePassengerTrip').post(passengerTripController.savePassengerTrip);
 	app.route('/getAllPassengerTrips').post(passengerTripController.getAllPassengerTrips);
 	app.route('/deletePassengerTrip').post(passengerTripController.deletePassengerTrip);
-
 	app.route('/getPaymentValues').post(paymentController.getPaymentValues);
-
 	app.route('/insertFirebase').post(requestController.insertFirebase);
+
+	// UI
+	app.get('/admin', function (req, res) {
+		res.sendfile('app/index.html');
+	});
 };

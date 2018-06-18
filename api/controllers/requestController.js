@@ -384,6 +384,52 @@ exports.setPickStatus = function (req, res) {
 	});
 }
 
+exports.updateTotalAmount = function (req, res) {
+	console.log(new Date(Date.now()).toLocaleString() + " - New Request -> Update total amount of a request")
+	
+	pool.getConnection(function (err, connection) {
+		var sql = mysql.format("update route_requests SET totalAmount = ? where requestId=?", [req.body.totalAmount, req.body.requestId]);
+		connection.query(sql, function (error, result, fields) {
+			connection.release();
+
+			if (error) {
+				res.status(200).send(error);
+			} else if (result.affectedRows == 0) {
+				res.status(200).send({
+					status: false,
+					result: result
+				});
+			} else {
+				res.status(200).send({
+					status: true,
+					result: result
+				});
+			}
+		});
+	});
+}
+
+exports.getDriverHistory = function (req, res) {
+	console.log(new Date(Date.now()).toLocaleString() + " - New Request -> Get driver history routes")
+
+	pool.getConnection(function (err, connection) {
+
+		// Get Route from driver_routes
+		var sqlQuery = mysql.format("select d.routeId, d.fromLocation, d.toLocation, d.tripDate, d.distance, d.time, SUM(r.totalAmount) as totalAmount, COUNT(*) as noOfPassengers from driver_routes d, route_requests r where d.routeId = r.routeId AND d.userId = ? group by d.routeId order by d.routeId desc", [req.body.driverId]);
+		connection.query(sqlQuery, function (error, result, fields) {
+			connection.release();
+
+			if (error) {
+				res.status(200).send(error);
+			}
+
+			res.status(200).send({
+				status: true,
+				response: result
+			});
+		});
+	})
+}
 
 exports.insertFirebase = function (req, res) {
 	var db = admin.database();
