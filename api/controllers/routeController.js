@@ -3,8 +3,9 @@ var mysql = require('mysql');
 
 var pool = mysql.createPool({
 	host: 'localhost',
+	socketPath: '/Applications/MAMP/tmp/mysql/mysql.sock',
 	user: 'root',
-	password: '',
+	password: 'root',
 	database: 'spds_db'
 });
 

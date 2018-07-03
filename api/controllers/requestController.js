@@ -2,17 +2,18 @@
 var mysql = require('mysql');
 var admin = require("firebase-admin");
 
-var serviceAccount = require("../configs/prepgamification-firebase-adminsdk-apdlr-0519f1626a.json");
+var serviceAccount = require("../configs/hopsteriosapp-firebase-adminsdk-3wzyp-80897431cc.json");
 
 admin.initializeApp({
 	credential: admin.credential.cert(serviceAccount),
-	databaseURL: "https://prepgamification.firebaseio.com"
+	databaseURL: "https://hopsteriosapp.firebaseio.com"
 });
 
 var pool = mysql.createPool({
 	host: 'localhost',
+	socketPath: '/Applications/MAMP/tmp/mysql/mysql.sock',
 	user: 'root',
-	password: '',
+	password: 'root',
 	database: 'spds_db'
 });
 
